@@ -14,13 +14,10 @@ def fixed_bbox():
     bbx2 = bbx1 + cut_w
     bby2 = bby1 + cut_h
 
-    print(bbx1, bby1, bbx2, bby2)
     return bbx1, bby1, bbx2, bby2
 
 def cut_generator(img1, img2):
     bbx1, bby1, bbx2, bby2 = fixed_bbox()
-    print(img1.shape)
-    print(img2.shape)
     
     img2_resized = img2.copy()
     aspect_ratio = min((bbx2-bbx1)/img2.shape[1], (bby2-bby1)/img2.shape[0])
@@ -41,7 +38,7 @@ def cut_generator(img1, img2):
 def process_all_images_in_folder(folder_path, template_img_path, output_folder, json_path):
     template_img = np.array(Image.open(template_img_path).convert('RGB').resize((256,256)))
     data_dict = load_data_as_dict(json_path)
-    # Output folder 생성
+
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
@@ -78,9 +75,11 @@ def find_answer(data_dict, image_name):
 
 # 실행 코드
 json_file_name = 'handwriting_data_info_clean.json'
-json_path = './metadata/' + json_file_name
-input_folder = './sample'
-output_folder = './output'
-template_image = '문가네_진국_170628_0002.jpg'
+json_path = '../../Metadata/' + json_file_name
+input_folder = '../../Image/Sample'
+template_folder_path = '../../ImageTemplate/Single/'
+template_image_filename = 'template_book_0'
+output_folder = os.path.join('../../Result/Single', template_image_filename)
+template_image = template_folder_path + template_image_filename + '.png'
 
 process_all_images_in_folder(input_folder, template_image, output_folder, json_path)
