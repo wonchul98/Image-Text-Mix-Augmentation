@@ -1,6 +1,51 @@
 import cv2
 import numpy as np
+import json
+import os
 
+
+def cut_generator(img1, img2, width_weight, height_weight, x_location,
+    y_location):
+  """
+  img1: 템플릿 이미지 (OpenCV image)
+  img2: 삽입할 이미지 (OpenCV image)
+  width_weight, height_weight: img2의 크기 비율
+  x_location, y_location: img1에서의 삽입 위치 비율
+  """
+  # Get dimensions of the template image
+  H, W = img1.shape[:2]
+
+  # Calculate new size for img2 based on the weights
+  new_w = int(W * width_weight)
+  new_h = int(H * height_weight)
+
+  # Resize the second image while keeping its transparency
+  img2_resized = cv2.resize(img2, (new_w, new_h),
+                            interpolation=cv2.INTER_CUBIC)
+
+  # Calculate the insertion point on img1
+  x_offset = int(W * x_location)
+  y_offset = int(H * y_location)
+
+  # Create a copy of img1 to paste the resized img2
+  img1_copy = img1.copy()
+
+  # Handle case when img2_resized has an alpha channel
+  if img2_resized.shape[2] == 4:
+    alpha_s = img2_resized[:, :, 3] / 255.0
+    alpha_l = 1.0 - alpha_s
+
+    for c in range(0, 3):
+      img1_copy[y_offset:y_offset + new_h, x_offset:x_offset + new_w, c] = (
+          alpha_s * img2_resized[:, :, c] +
+          alpha_l * img1_copy[y_offset:y_offset + new_h,
+                    x_offset:x_offset + new_w, c]
+      )
+  else:
+    img1_copy[y_offset:y_offset + new_h,
+    x_offset:x_offset + new_w] = img2_resized
+
+  return img1_copy
 
 def detect_skew_angle(image):
     # 이미지 그레이스케일로 변환
@@ -146,16 +191,49 @@ def crop_skewed_image(skewed_image):
   return cropped_image
 
 
-# Example usage
-first_image_path = 'sign.jpg'
-image = cv2.imread(first_image_path)
-skew_angle = detect_skew_angle(image)
-print(f"Detected skew angle: {skew_angle} degrees")
 
-skewed_image = apply_perspective_skew('source.JPG', -skew_angle)
+def read_json(filename):
+  """
+  JSON 파일을 읽고 각 템플릿당 이미지 합성
+  """
+  with open(filename, 'r') as file:
+    json_data = json.load(file)
 
-# Crop the skewed image to remove padding and only keep the relevant area
-cropped_skewed_image = crop_skewed_image(skewed_image)
+  template_folder = json_data["template_folder"]
+  image_folder = json_data["image_folder"]
+  output_folder = json_data["output_folder"]
+  data_info = json_data["data_info"]
 
-# Save the cropped skewed image as PNG to include alpha channel
-cv2.imwrite('cropped_skewed_image.png', cropped_skewed_image)
+  for info in data_info:
+    template_name = info["template_name"]
+    width_weight = float(info["width_weight"])
+    height_weight = float(info["height_weight"])
+    x_location = float(info["x_location"])
+    y_location = float(info["y_location"])
+
+    template_path = os.path.join(template_folder, template_name)
+    template = cv2.imread(template_path)
+
+    if template is None:
+      print(f"Failed to load template image: {template_path}")
+      continue
+
+    skew_angle = detect_skew_angle(template)
+
+    for image_name in os.listdir(image_folder):
+      image_path = os.path.join(image_folder, image_name)
+      skewed_image = apply_perspective_skew(image_path, -skew_angle)
+      modified_image = crop_skewed_image(skewed_image);
+
+      if skewed_image is None:
+        print(f"Failed to apply skew for image: {image_path}")
+        continue
+
+      result = cut_generator(template, modified_image, width_weight,
+                             height_weight, x_location, y_location)
+
+      output_image_name = os.path.join(output_folder,
+                                       f"{template_name}_{image_name}")
+      cv2.imwrite(output_image_name, result)
+
+read_json("fixed-skewed.json")
