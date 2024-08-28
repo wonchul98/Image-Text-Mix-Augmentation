@@ -1,9 +1,2 @@
-# Image 폴더
-Image/
-
-# Sample 폴더 예외 처리
-!Image/Sample/
-!Image/Sample/**
-
 #Result 폴더
 Result/
