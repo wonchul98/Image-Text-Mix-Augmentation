@@ -25,6 +25,15 @@ def process_all_images_in_folder(folder_path, template_img_path, output_folder, 
     if not os.path.exists(output_prompt_folder):
         os.makedirs(output_prompt_folder)
 
+    prompt_output_filename = os.path.join(output_prompt_folder, "prompts.json")
+
+    # 기존 프롬프트 파일이 있으면 로드, 없으면 빈 리스트 생성
+    if os.path.exists(prompt_output_filename):
+        with open(prompt_output_filename, 'r', encoding='utf-8') as outfile:
+            all_prompts = json.load(outfile)
+    else:
+        all_prompts = []
+
     for filename in os.listdir(folder_path):
         if filename.endswith('.jpg') or filename.endswith('.jpeg') or filename.endswith('.png'):
             img_path = os.path.join(folder_path, filename)
@@ -57,31 +66,26 @@ def process_all_images_in_folder(folder_path, template_img_path, output_folder, 
                 generated_answer = f"{answer_format1}{answer}{answer_format2}"
 
                 # 프롬프트 생성
-                prompt_content = [
-                    {
-                        "id": f"{data_info['template_name']}_{filename.split('.')[0]}_{data_info['task']}",
-                        "image": os.path.abspath(output_image_path),
-                        "conversations": [
-                            {
-                                "role": "user", 
-                                "content": question
-                            }, 
-                            {
-                                "role": "assistant", 
-                                "content": generated_answer
-                            }
-                        ]
-                    }
-                ]
+                prompt_content = {
+                    "id": f"{data_info['template_name']}_{filename.split('.')[0]}_{data_info['task']}",
+                    "image": os.path.abspath(output_image_path),
+                    "conversations": [
+                        {
+                            "role": "user", 
+                            "content": question
+                        }, 
+                        {
+                            "role": "assistant", 
+                            "content": generated_answer
+                        }
+                    ]
+                }
 
-                # 프롬프트를 JSON 파일로 저장
-                prompt_output_filename = f"{data_info['template_name']}_{filename.split('.')[0]}_{data_info['task']}.json"
-                prompt_output_path = os.path.join(output_prompt_folder, prompt_output_filename)
-                
-                with open(prompt_output_path, 'w', encoding='utf-8') as outfile:
-                    json.dump(prompt_content, outfile, ensure_ascii=False, indent=4)
+                all_prompts.append(prompt_content)
 
-                # print(f"Saved prompt: {prompt_output_path}")
+    # 프롬프트를 JSON 파일로 저장 (덮어쓰기)
+    with open(prompt_output_filename, 'w', encoding='utf-8') as outfile:
+        json.dump(all_prompts, outfile, ensure_ascii=False, indent=4)
 
 def load_data_as_dict(json_path):
     with open(json_path, 'r', encoding='utf-8') as f:
