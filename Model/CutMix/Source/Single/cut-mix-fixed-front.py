@@ -1,6 +1,5 @@
 import os
 from PIL import Image
-import numpy as np
 import json
 
 def cut_generator(img1, img2, width_weight, height_weight, x_location, y_location):
@@ -17,9 +16,8 @@ def cut_generator(img1, img2, width_weight, height_weight, x_location, y_locatio
 
     return img1_copy
 
-def process_all_images_in_folder(folder_path, template_img_path, output_folder, output_prompt_folder, json_path, data_info_list, prompt_folder):
+def process_all_images_in_folder(folder_path, template_img_path, output_folder, output_prompt_folder, data_dict, data_info_list, prompt_folder):
     template_img = Image.open(template_img_path).convert('RGB').resize((256, 256))
-    data_dict = load_data_as_dict(json_path)
 
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
@@ -108,6 +106,9 @@ output_prompt_folder = fixed_front_json["output_prompt_folder"]
 location_folder = fixed_front_json["location_folder"]
 prompt_folder = fixed_front_json["prompt_folder"]
 
+# load_data_as_dict 함수를 for 루프 밖에서 한 번만 호출
+data_dict = load_data_as_dict(json_path)
+
 for data_info in fixed_front_json["data_info"]:
     data_file_path = os.path.join(location_folder, data_info["data_file"])
     with open(data_file_path, 'r', encoding='utf-8') as df:
@@ -117,4 +118,4 @@ for data_info in fixed_front_json["data_info"]:
     template_image = os.path.join(template_folder_path, f"{template_image_filename}.png")
     specific_output_folder = os.path.join(output_folder, template_image_filename, location_data["task"])
     
-    process_all_images_in_folder(input_folder, template_image, specific_output_folder, output_prompt_folder, json_path, [location_data], prompt_folder)
+    process_all_images_in_folder(input_folder, template_image, specific_output_folder, output_prompt_folder, data_dict, [location_data], prompt_folder)
