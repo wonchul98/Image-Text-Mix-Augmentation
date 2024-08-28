@@ -3,72 +3,65 @@ from PIL import Image
 import numpy as np
 import json
 
-def fixed_bbox():
-    W = 256
-    H = 256
-    cut_w = int(W * 0.4)
-    cut_h = int(H * 1.3)
+def cut_generator(img1, img2, width_weight, height_weight, x_location, y_location):
+    """
+    img1: 템플릿 이미지
+    img2: 삽입할 이미지
+    width_weight, height_weight: img2의 크기 비율
+    x_location, y_location: img1에서의 삽입 위치 비율
+    """
+    W, H = img1.size
 
-    bbx1 = 80
-    bby1 = -50
-    bbx2 = bbx1 + cut_w
-    bby2 = bby1 + cut_h
+    # 새로운 크기 계산
+    new_w = int(W * width_weight)
+    new_h = int(H * height_weight)
 
-    print(bbx1, bby1, bbx2, bby2)
-    return bbx1, bby1, bbx2, bby2
+    img2_resized = img2.resize((new_w, new_h))
 
-def cut_generator(img1, img2):
-    bbx1, bby1, bbx2, bby2 = fixed_bbox()
-    print(img1.shape)
-    print(img2.shape)
-    
-    img2_resized = img2.copy()
-    aspect_ratio = min((bbx2-bbx1)/img2.shape[1], (bby2-bby1)/img2.shape[0])
-    new_w = int(img2.shape[1] * aspect_ratio)
-    new_h = int(img2.shape[0] * aspect_ratio)
+    # 삽입 위치 계산
+    x_offset = int(W * x_location)
+    y_offset = int(H * y_location)
 
-    img2_resized = np.array(Image.fromarray(img2_resized).resize((new_w, new_h)))
-    
-    x_offset = bbx1 + (bbx2 - bbx1 - new_w) // 2
-    y_offset = bby1 + (bby2 - bby1 - new_h) // 2
+    img1_copy = img1.copy()
+    img1_copy.paste(img2_resized, (x_offset, y_offset))
 
-    image = img1.copy()
-    image[y_offset:y_offset+new_h, x_offset:x_offset+new_w, :] = img2_resized
-    
-    return image
+    return img1_copy
 
 # 폴더 내 모든 이미지에 대해 CutMix 수행
-def process_all_images_in_folder(folder_path, template_img_path, output_folder, json_path):
-    template_img = np.array(Image.open(template_img_path).convert('RGB').resize((256,256)))
+def process_all_images_in_folder(folder_path, template_img_path, output_folder, json_path, data_info_list):
+    template_img = Image.open(template_img_path).convert('RGB').resize((256, 256))
     data_dict = load_data_as_dict(json_path)
-    # Output folder 생성
+
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
-    # 폴더 내의 모든 파일 처리
     for filename in os.listdir(folder_path):
         if filename.endswith('.jpg') or filename.endswith('.jpeg') or filename.endswith('.png'):
             img_path = os.path.join(folder_path, filename)
-            img = np.array(Image.open(img_path).convert('RGB').resize((256,256)))
+            img = Image.open(img_path).convert('RGB').resize((256, 256))
             
-            # CutMix 수행
-            mixed_img = cut_generator(template_img, img)
-            
-            # 결과 저장
-            result_img = Image.fromarray(mixed_img)
-            result_img.save(os.path.join(output_folder, filename))
-            
-            print(find_answer(data_dict, filename))
-            
+            for data_info in data_info_list:
+                width_weight = float(data_info["width_weight"])
+                height_weight = float(data_info["height_weight"])
+                x_location = float(data_info["x_location"])
+                y_location = float(data_info["y_location"])
+
+                mixed_img = cut_generator(template_img, img, width_weight, height_weight, x_location, y_location)
+                
+                output_filename = os.path.join(output_folder, f"{data_info['template_name']}_{filename}")
+                mixed_img.save(output_filename)
+
+                # find_answer 기능 추가
+                answer = find_answer(data_dict, filename)
+                if answer:
+                    print(f"Image: {filename}, Answer: {answer}")
+                else:
+                    print(f"Image: {filename}, Answer: Not found")
 
 def load_data_as_dict(json_path):
-    """
-    JSON 데이터를 딕셔너리로 로드.
-    """
     with open(json_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-        
-    # 딕셔너리로 변환
+
     data_dict = {annotation['id']: annotation['text'] for annotation in data['annotations']}
     return data_dict
 
@@ -77,10 +70,17 @@ def find_answer(data_dict, image_name):
     return data_dict.get(image_id, None)
 
 # 실행 코드
-json_file_name = 'handwriting_data_info_clean.json'
-json_path = './metadata/' + json_file_name
-input_folder = './sample'
-output_folder = './output'
-template_image = '문가네_진국_170628_0002.jpg'
+with open('fixed_front.json') as f:
+    fixed_front_json = json.load(f)
 
-process_all_images_in_folder(input_folder, template_image, output_folder, json_path)
+json_path = os.path.join(fixed_front_json["metadata_folder"], fixed_front_json["metadata_name"])
+input_folder = fixed_front_json["image_folder"]
+template_folder_path = fixed_front_json["template_folder"]
+output_folder = fixed_front_json["output_folder"]
+
+for data_info in fixed_front_json["data_info"]:
+    template_image_filename = data_info["template_name"]
+    template_image = os.path.join(template_folder_path, f"{template_image_filename}.png")
+    specific_output_folder = os.path.join(output_folder, template_image_filename)
+    
+    process_all_images_in_folder(input_folder, template_image, specific_output_folder, json_path, [data_info])
