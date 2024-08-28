@@ -16,23 +16,11 @@ def cut_generator(img1, img2, width_weight, height_weight, x_location, y_locatio
 
     return img1_copy
 
-def process_all_images_in_folder(folder_path, template_img_path, output_folder, output_prompt_folder, data_dict, data_info_list, prompt_folder):
+def process_all_images_in_folder(folder_path, template_img_path, output_folder, output_prompt_folder, data_dict, data_info_list, prompt_folder, all_prompts):
     template_img = Image.open(template_img_path).convert('RGB').resize((256, 256))
 
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
-
-    if not os.path.exists(output_prompt_folder):
-        os.makedirs(output_prompt_folder)
-
-    prompt_output_filename = os.path.join(output_prompt_folder, "prompts.json")
-
-    # 기존 프롬프트 파일이 있으면 로드, 없으면 빈 리스트 생성
-    if os.path.exists(prompt_output_filename):
-        with open(prompt_output_filename, 'r', encoding='utf-8') as outfile:
-            all_prompts = json.load(outfile)
-    else:
-        all_prompts = []
 
     for filename in os.listdir(folder_path):
         if filename.endswith('.jpg') or filename.endswith('.jpeg') or filename.endswith('.png'):
@@ -83,10 +71,6 @@ def process_all_images_in_folder(folder_path, template_img_path, output_folder, 
 
                 all_prompts.append(prompt_content)
 
-    # 프롬프트를 JSON 파일로 저장 (덮어쓰기)
-    with open(prompt_output_filename, 'w', encoding='utf-8') as outfile:
-        json.dump(all_prompts, outfile, ensure_ascii=False, indent=4)
-
 def load_data_as_dict(json_path):
     with open(json_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
@@ -113,6 +97,14 @@ prompt_folder = fixed_front_json["prompt_folder"]
 # load_data_as_dict 함수를 for 루프 밖에서 한 번만 호출
 data_dict = load_data_as_dict(json_path)
 
+# 프롬프트 파일을 처음에 한 번만 로드
+prompt_output_filename = os.path.join(output_prompt_folder, "prompts.json")
+if os.path.exists(prompt_output_filename):
+    with open(prompt_output_filename, 'r', encoding='utf-8') as outfile:
+        all_prompts = json.load(outfile)
+else:
+    all_prompts = []
+
 for data_info in fixed_front_json["data_info"]:
     data_file_path = os.path.join(location_folder, data_info["data_file"])
     with open(data_file_path, 'r', encoding='utf-8') as df:
@@ -122,4 +114,8 @@ for data_info in fixed_front_json["data_info"]:
     template_image = os.path.join(template_folder_path, f"{template_image_filename}.png")
     specific_output_folder = os.path.join(output_folder, template_image_filename, location_data["task"])
     
-    process_all_images_in_folder(input_folder, template_image, specific_output_folder, output_prompt_folder, data_dict, [location_data], prompt_folder)
+    process_all_images_in_folder(input_folder, template_image, specific_output_folder, output_prompt_folder, data_dict, [location_data], prompt_folder, all_prompts)
+
+# 모든 처리가 끝난 후 프롬프트를 저장
+with open(prompt_output_filename, 'w', encoding='utf-8') as outfile:
+    json.dump(all_prompts, outfile, ensure_ascii=False, indent=4)
