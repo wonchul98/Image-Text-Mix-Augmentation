@@ -4,13 +4,10 @@
   "metadata_name": "handwriting_data_info_clean.json",
   "image_folder": "../../Image/sample",
   "output_folder": "../../Result/Single",
+  "location_folder" : "./Location_Data",
   "data_info": [
     {
-      "template_name": "template_book_0",
-      "width_weight": 0.7,
-      "height_weight": 0.4,
-      "x_location": 0.1,
-      "y_location": 0.1
+      "data_file": "template_book_0.json"
     }
   ]
 }

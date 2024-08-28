@@ -69,7 +69,7 @@ def find_answer(data_dict, image_name):
     image_id = image_name.split('.')[0]
     return data_dict.get(image_id, None)
 
-# 실행 코드
+# JSON 파일 로드 및 실행 코드
 with open('fixed_front.json') as f:
     fixed_front_json = json.load(f)
 
@@ -77,10 +77,16 @@ json_path = os.path.join(fixed_front_json["metadata_folder"], fixed_front_json["
 input_folder = fixed_front_json["image_folder"]
 template_folder_path = fixed_front_json["template_folder"]
 output_folder = fixed_front_json["output_folder"]
+location_folder = fixed_front_json["location_folder"]
 
 for data_info in fixed_front_json["data_info"]:
-    template_image_filename = data_info["template_name"]
+    # data_file을 로드
+    data_file_path = os.path.join(location_folder, data_info["data_file"])
+    with open(data_file_path) as df:
+        location_data = json.load(df)
+    
+    template_image_filename = location_data["template_name"]
     template_image = os.path.join(template_folder_path, f"{template_image_filename}.png")
     specific_output_folder = os.path.join(output_folder, template_image_filename)
     
-    process_all_images_in_folder(input_folder, template_image, specific_output_folder, json_path, [data_info])
+    process_all_images_in_folder(input_folder, template_image, specific_output_folder, json_path, [location_data])
