@@ -3,6 +3,8 @@
     "width_weight": 0.91,
     "height_weight": 0.25,
     "x_location": 0.07,
-    "y_location": 0.09
+    "y_location": 0.09,
+    "task": "title",
+    "prompt_file": "movie-title.json"
   }
   

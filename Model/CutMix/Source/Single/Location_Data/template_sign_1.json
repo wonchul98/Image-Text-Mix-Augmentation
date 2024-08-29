@@ -3,6 +3,8 @@
     "width_weight": 0.5,
     "height_weight": 0.55,
     "x_location": 0.25,
-    "y_location": 0.1
+    "y_location": 0.1,
+    "task": "content",
+    "prompt_file": "signboard_content.json"
   }
   

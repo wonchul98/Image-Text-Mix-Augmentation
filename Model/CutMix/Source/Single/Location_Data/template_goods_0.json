@@ -3,5 +3,7 @@
     "width_weight": 0.35,
     "height_weight": 0.11,
     "x_location": 0.34,
-    "y_location": 0.43
+    "y_location": 0.43,
+    "task": "name",
+    "prompt_file": "product-name.json"
 }

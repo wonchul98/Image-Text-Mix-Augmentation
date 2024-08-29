@@ -3,5 +3,7 @@
     "width_weight": 0.3,
     "height_weight": 0.1,
     "x_location": 0.4,
-    "y_location": 0.55
+    "y_location": 0.55,
+    "task": "name",
+    "prompt_file": "nameplate-name.json"
 }
