@@ -1,0 +1,12 @@
+
+[
+    {
+        "question": "<image>\n이 책의 제목이 뭐고 저자가 누구야?",
+        "answer" : "이 책의 제목은 <answer_1>이고, 저자는 <answer_2> 입니다."
+    },
+    {
+        "question": "<image>\n이 책의 저자가 누구고 책의 제목이 뭐야?",
+        "answer" : "이 책의 저자는 <answer_2>이고, 제목은 <answer_1> 입니다."
+    }
+]
+  

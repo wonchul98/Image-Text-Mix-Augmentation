@@ -44,8 +44,8 @@ def cut_generator(img1, img2, lam=0.5):
 
 
 # Test용 코드 
-dir1 = 'source.JPG'
-dir2 = '문가네_진국_170628_0002.jpg' 
+dir1 = '../../Image/sample/00012867.png'
+dir2 = '../../ImageTemplate/Single/template_book_0.png' 
 img1 = np.array(Image.open(dir2).convert('RGB').resize((256,256)))
 img2 = np.array(Image.open(dir1).convert('RGB').resize((256,256)))
 
