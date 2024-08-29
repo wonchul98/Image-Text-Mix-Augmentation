@@ -3,5 +3,7 @@
   "width_weight": 0.41,
   "height_weight": 0.18,
   "x_location": 0.3,
-  "y_location": 0.3
+  "y_location": 0.3,
+  "task": "name",
+  "prompt_file": "store-name.json"
 }

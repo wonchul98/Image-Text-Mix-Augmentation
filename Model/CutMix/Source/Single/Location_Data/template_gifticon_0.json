@@ -3,5 +3,7 @@
     "width_weight": 0.5,
     "height_weight": 0.07,
     "x_location": 0.2,
-    "y_location": 0.5
+    "y_location": 0.5,
+    "task": "content",
+    "prompt_file": "gifticon_content.json"
 }

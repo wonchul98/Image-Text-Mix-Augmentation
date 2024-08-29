@@ -3,5 +3,7 @@
     "width_weight": 0.2,
     "height_weight": 0.1,
     "x_location": 0.3,
-    "y_location": 0.17
+    "y_location": 0.17,
+    "task": "name",
+    "prompt_file": "building-name.json"
 }

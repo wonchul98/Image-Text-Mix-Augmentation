@@ -3,5 +3,7 @@
     "width_weight": 0.7,
     "height_weight": 0.15,
     "x_location": 0.1,
-    "y_location": 0.75
+    "y_location": 0.75,
+    "task": "title",
+    "prompt_file": "book-title.json"
 }
