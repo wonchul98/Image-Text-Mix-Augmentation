@@ -1,0 +1,10 @@
+{
+    "template_name": "template_sign_0",
+    "width_weight": 0.5,
+    "height_weight": 0.12,
+    "x_location": 0.28,
+    "y_location": 0.5,
+    "task": "content",
+    "prompt_file": "signboard_content.json"
+  }
+  
