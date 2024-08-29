@@ -1,0 +1,20 @@
+{
+  "template_name": "template_book_0",
+  "prompt_file": "book-multi.json",
+  "insert_image_numbers": 2,
+  "task": "multi",
+  "insert_image_infos": [
+    {
+      "width_weight": 0.7,
+      "height_weight": 0.4,
+      "x_location": 0.1,
+      "y_location": 0.1
+    },
+    {
+      "width_weight": 0.2,
+      "height_weight": 0.1,
+      "x_location": 0.8,
+      "y_location": 0.7
+    }
+  ]
+}
