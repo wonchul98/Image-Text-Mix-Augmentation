@@ -1,0 +1,20 @@
+{
+  "template_name": "template_receipt_1",
+  "prompt_file": "receipt1-multi.json",
+  "insert_image_numbers": 2,
+  "task": "multi",
+  "insert_image_infos": [
+    {
+      "width_weight": 0.3,
+      "height_weight": 0.028,
+      "x_location": 0.26,
+      "y_location": 0.1
+    },
+    {
+      "width_weight": 0.7,
+      "height_weight": 0.028,
+      "x_location": 0.26,
+      "y_location": 0.145
+    }
+  ]
+}
