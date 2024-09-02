@@ -1,0 +1,9 @@
+  {
+    "template_name": "template_signboard_0",
+    "width_weight": 0.58,
+    "height_weight": 0.2,
+    "x_location": 0.22,
+    "y_location": 0.32,
+    "task" : "description",
+    "prompt_file" : "description.json"
+  }

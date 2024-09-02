@@ -1,49 +1,81 @@
-import cv2
-import numpy as np
 import json
 import os
+import cv2
+import numpy as np
 
 
-def cut_generator(img1, img2, width_weight, height_weight, x_location,
-    y_location):
+
+def masking(img_path, width, height):
+  image = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
+  if image is None:
+    raise ValueError(f"Failed to load image from path: {img_path}")
+  H, W = image.shape[:2]
+  # Calculate scaling ratios for width and height
+  x_ratio = width / W
+  y_ratio = height / H
+
+  # Determine the appropriate scaling ratio to ensure the image fits within the specified area
+  ratio = min(x_ratio, y_ratio)
+
+  # Calculate new dimensions based on the selected ratio
+  new_w = int(W * ratio)
+  new_h = int(H * ratio)
+  resized_image = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_CUBIC)
+  # 6. 흰색 배경 이미지 생성
+  result_image = np.full((height, width, 3), (255, 255, 255),
+                         dtype=np.uint8)
+
+  # 7. 리사이즈된 이미지를 중앙에 배치
+  x_offset = (width - new_w) // 2
+  y_offset = (height - new_h) // 2
+
+  result_image[y_offset:y_offset + new_h,
+  x_offset:x_offset + new_w] = resized_image
+
+  return result_image
+
+def cut_generator(img1, img2, x_pixels, y_pixels, x_offset, y_offset):
   """
   img1: 템플릿 이미지 (OpenCV image)
   img2: 삽입할 이미지 (OpenCV image)
-  width_weight, height_weight: img2의 크기 비율
-  x_location, y_location: img1에서의 삽입 위치 비율
+  x_pixels, y_pixels: img2가 들어갈 사각형의 폭과 높이 (픽셀 단위)
+  x_offset, y_offset: img1에서의 삽입 위치 (픽셀 단위)
   """
-  # Get dimensions of the template image
-  H, W = img1.shape[:2]
-
-  # Calculate new size for img2 based on the weights
-  new_w = int(W * width_weight)
-  new_h = int(H * height_weight)
+  H, W = img2.shape[:2]
+  #
+  # # Calculate scaling ratios for width and height
+  # x_ratio = x_pixels / W
+  # y_ratio = y_pixels / H
+  #
+  # # Determine the appropriate scaling ratio to ensure the image fits within the specified area
+  # ratio = min(x_ratio, y_ratio)
+  #
+  # # Calculate new dimensions based on the selected ratio
+  # new_w = int(W * ratio)
+  # new_h = int(H * ratio)
 
   # Resize the second image while keeping its transparency
-  img2_resized = cv2.resize(img2, (new_w, new_h),
-                            interpolation=cv2.INTER_CUBIC)
-
-  # Calculate the insertion point on img1
-  x_offset = int(W * x_location)
-  y_offset = int(H * y_location)
+  # img2_resized = cv2.resize(img2, (new_w, new_h), interpolation=cv2.INTER_CUBIC)
 
   # Create a copy of img1 to paste the resized img2
   img1_copy = img1.copy()
 
   # Handle case when img2_resized has an alpha channel
-  if img2_resized.shape[2] == 4:
-    alpha_s = img2_resized[:, :, 3] / 255.0
+  if img2.shape[2] == 4:
+    # Separate alpha channel from img2
+    alpha_s = img2[:, :, 3] / 255.0
     alpha_l = 1.0 - alpha_s
 
-    for c in range(0, 3):
-      img1_copy[y_offset:y_offset + new_h, x_offset:x_offset + new_w, c] = (
-          alpha_s * img2_resized[:, :, c] +
-          alpha_l * img1_copy[y_offset:y_offset + new_h,
-                    x_offset:x_offset + new_w, c]
+    for c in range(0, 3):  # Loop over the color channels
+      img1_copy[y_offset:y_offset + H, x_offset:x_offset + W, c] = (
+          alpha_s * img2[:, :, c] +
+          alpha_l * img1_copy[y_offset:y_offset + H,
+                    x_offset:x_offset + W, c]
       )
   else:
-    img1_copy[y_offset:y_offset + new_h,
-    x_offset:x_offset + new_w] = img2_resized
+    # If no alpha channel, just paste the resized image
+    img1_copy[y_offset:y_offset + H,
+    x_offset:x_offset + W] = img2
 
   return img1_copy
 
@@ -109,12 +141,8 @@ def calculate_bounding_box(src_pts, matrix):
   return new_width, new_height, (offset_x, offset_y)
 
 
-def apply_perspective_skew(image_path, skew_angle, padding=200):
-  image = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
-  if image is None:
-    raise ValueError(f"Failed to load image from path: {image_path}")
-
-  padded_image = add_padding(image, padding)
+def apply_perspective_skew(masked_image, skew_angle, padding=200):
+  padded_image = add_padding(masked_image, padding)
   (h, w) = padded_image.shape[:2]
 
   angle_radians = np.deg2rad(skew_angle)
@@ -238,7 +266,7 @@ def read_json(filename):
     if not os.path.exists(output_prompt_folder):
       os.makedirs(output_prompt_folder)
 
-    template_path = os.path.join(template_folder, template_name)
+    template_path = os.path.join(template_folder, f"{template_name}.png")
     template = cv2.imread(template_path)
 
     if template is None:
@@ -246,10 +274,21 @@ def read_json(filename):
       continue
 
     skew_angle = detect_skew_angle(template)
+    print("template_name:", template_name, "skew:", skew_angle)
+
+    # Get image dimensions
+    template_height, template_width = template.shape[:2]
+
+    # Convert ratio coordinates to pixel values
+    x_pixel_location = int(x_location * template_width)
+    y_pixel_location = int(y_location * template_height)
+    rectangle_width = int(width_weight * template_width)
+    rectangle_height = int(height_weight * template_height)
 
     for image_name in os.listdir(image_folder):
       image_path = os.path.join(image_folder, image_name)
-      skewed_image = apply_perspective_skew(image_path, skew_angle)
+      masked_image = masking(image_path, rectangle_width, rectangle_height)
+      skewed_image = apply_perspective_skew(masked_image, skew_angle)
       modified_image = crop_skewed_image(skewed_image)
 
 
@@ -257,11 +296,11 @@ def read_json(filename):
         print(f"Failed to apply skew for image: {image_path}")
         continue
 
-      result = cut_generator(template, modified_image, width_weight,
-                             height_weight, x_location, y_location)
+      result = cut_generator(template, modified_image, rectangle_width,
+                             rectangle_height, x_pixel_location, y_pixel_location)
 
       output_image_name = os.path.join(specific_output_folder,
-                                       f"{template_name.split('.')[0]}_{image_name.split('.')[0]}_{task}.png")
+                                       f"{template_name}_{image_name.split('.')[0]}_{task}.png")
       cv2.imwrite(output_image_name, result)
 
       answer = find_answer(data_dict, image_name)
