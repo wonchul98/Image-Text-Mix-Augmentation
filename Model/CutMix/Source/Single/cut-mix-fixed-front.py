@@ -163,7 +163,7 @@ def find_answer(data_dict, image_name):
     return data_dict.get(image_id, None)
 
 # JSON 파일 로드 및 실행 코드
-with open('C:/Users/SSAFY/Desktop/dev/S11P21S006/Model/CutMix/Source/Single/fixed_front.json', 'r', encoding='utf-8') as f:
+with open('fixed_front.json', 'r', encoding='utf-8') as f:
     fixed_front_json = json.load(f)
 
 json_path = os.path.join(fixed_front_json["metadata_folder"], fixed_front_json["metadata_name"])
