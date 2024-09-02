@@ -1,0 +1,11 @@
+{
+    "template_name": "template_document_1",
+    "width_weight": 0.51,
+    "height_weight": 0.75,
+    "x_location": 0.25,
+    "y_location": 0.13,
+    "height_per_line" : 0.02,
+    "max_lines" : 10,
+    "task": "phrase",
+    "prompt_file": "test-phrase.json"
+}
