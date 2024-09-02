@@ -2,18 +2,24 @@ import os
 from PIL import Image
 import json
 
-def make_white_label(img1, width_weight, height_weight, x_location, y_location):
+def make_white_label(img1, insert_image_infos):
     W, H = img1.size
     
-    x_start = int(W * x_location)
-    y_start = int(H * y_location)
-    x_end = int(x_start + W * width_weight)
-    y_end = int(y_start + H * height_weight)
-    
-    for i in range(x_start, x_end):
-        for j in range(y_start, y_end):
-            img1.putpixel((i, j), (255, 255, 255))
-            
+    for data_info in insert_image_infos:
+        width_weight = float(data_info["width_weight"])
+        height_weight = float(data_info["height_weight"])
+        x_location = float(data_info["x_location"])
+        y_location = float(data_info["y_location"])
+
+        x_start = int(W * x_location)
+        y_start = int(H * y_location)
+        x_end = int(x_start + W * width_weight)
+        y_end = int(y_start + H * height_weight)
+
+        for i in range(x_start, x_end):
+            for j in range(y_start, y_end):
+                img1.putpixel((i, j), (255, 255, 255))
+                
     return img1
 
 def cut_generator(img1, img_list, insert_image_infos):
@@ -25,9 +31,6 @@ def cut_generator(img1, img_list, insert_image_infos):
         height_weight = float(data_info["height_weight"])
         x_location = float(data_info["x_location"])
         y_location = float(data_info["y_location"])
-        
-        # Add a white label before inserting the image
-        img1_copy = make_white_label(img1_copy, width_weight, height_weight, x_location, y_location)
 
         target_w = int(W * width_weight)
         target_h = int(H * height_weight)
@@ -42,7 +45,7 @@ def cut_generator(img1, img_list, insert_image_infos):
             new_w = int(new_h * img2_aspect_ratio)
 
         img2_resized = img2.resize((new_w, new_h))
-        
+
         x_offset = int(W * x_location)
         y_offset = int(H * y_location)
 
@@ -50,13 +53,20 @@ def cut_generator(img1, img_list, insert_image_infos):
 
     return img1_copy
 
-def process_all_images_in_folder(folder_path, template_img_path, output_folder, output_prompt_folder, data_dict, data_info, prompt_folder, all_prompts):
+def process_all_images_in_folder(folder_path, template_img_path, output_folder, output_prompt_folder, data_dict, location_data, prompt_folder, all_prompts):
     template_img = Image.open(template_img_path).convert('RGB')
 
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
-    insert_image_numbers = data_info["insert_image_numbers"]
+    white_labelled_template_img = make_white_label(template_img.copy(), location_data["insert_image_infos"])
+
+    insert_image_numbers = location_data["insert_image_numbers"]
+    prompt_file_path = os.path.join(prompt_folder, location_data["prompt_file"])
+
+    with open(prompt_file_path, 'r', encoding='utf-8') as pf:
+        prompt_data_list = json.load(pf)
+
     images = [Image.open(os.path.join(folder_path, filename)).convert('RGB')
               for filename in os.listdir(folder_path)
               if filename.endswith('.jpg') or filename.endswith('.jpeg') or filename.endswith('.png')]
@@ -66,20 +76,15 @@ def process_all_images_in_folder(folder_path, template_img_path, output_folder, 
         if len(img_list) < insert_image_numbers:
             break
 
-        mixed_img = cut_generator(template_img, img_list, data_info["insert_image_infos"])
+        mixed_img = cut_generator(white_labelled_template_img.copy(), img_list, location_data["insert_image_infos"])
 
-        output_filename = f"{data_info['template_name']}_{i // insert_image_numbers + 1}_{data_info['task']}.png"
+        output_filename = f"{location_data['template_name']}_{i // insert_image_numbers + 1}_{location_data['task']}.png"
         output_image_path = os.path.join(output_folder, output_filename)
         mixed_img.save(output_image_path)
 
         answers = [find_answer(data_dict, os.listdir(folder_path)[i + j]) for j in range(insert_image_numbers)]
         answers = [answer if answer else "Not found" for answer in answers]
 
-        prompt_file_path = os.path.join(prompt_folder, data_info["prompt_file"])
-        
-        with open(prompt_file_path, 'r', encoding='utf-8') as pf:
-            prompt_data_list = json.load(pf)
-        
         conversations = []
         for prompt_data in prompt_data_list:
             question = prompt_data.get("question", "No question found")
@@ -98,7 +103,7 @@ def process_all_images_in_folder(folder_path, template_img_path, output_folder, 
             })
 
         prompt_content = {
-            "id": f"{data_info['template_name']}_{i // insert_image_numbers + 1}_{data_info['task']}",
+            "id": f"{location_data['template_name']}_{i // insert_image_numbers + 1}_{location_data['task']}",
             "image": os.path.abspath(output_image_path),
             "conversations": conversations
         }
