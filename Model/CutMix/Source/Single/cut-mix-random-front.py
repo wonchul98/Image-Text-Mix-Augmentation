@@ -1,66 +1,73 @@
 import json
 import os
-from PIL import Image
+from PIL import Image, ImageDraw
 import numpy as np
 
 def determine_location(x_offset, y_offset, W, H, image_x, image_y):
     practical_W = W - image_x
     practical_H = H - image_y
 
-    # Divide the width and height into thirds
+    # 3분할
     third_width = practical_W // 3
     third_height = practical_H // 3
 
-    # Determine horizontal position
-    if x_offset - image_x/2 < third_width:
+    if x_offset < third_width:
         x_location = '좌측'
-    elif x_offset - image_x/2 < 2 * third_width:
+    elif x_offset < 2 * third_width:
         x_location = '중간'
     else:
         x_location = '우측'
 
-    # Determine vertical position
-    if y_offset - image_y/2< third_height:
+    if y_offset < third_height:
         y_location = '상단'
-    elif y_offset - image_y/2< 2 * third_height:
+    elif y_offset < 2 * third_height:
         y_location = '중간'
     else:
         y_location = '하단'
 
-    if(x_location == '중간' and y_location == '중간') : return "중앙"
-    # Combine to get the full location description
+    if x_location == '중간' and y_location == '중간':
+        return "중앙"
+    
     return f"{x_location} {y_location}"
 
 def cut_generator(img1, img2, width_weight, height_weight):
-    # Convert PIL images to NumPy arrays
-    img1_array = np.array(img1)
+    W, H = img1.size  
+    target_w = int(W * width_weight)  # Mask의 너비
+    target_h = int(H * height_weight)  # Mask의 높이
+    
+    # 복사본
+    img1_copy = img1.copy()
+    draw = ImageDraw.Draw(img1_copy)
+    
+    # mask를 그릴 위치
+    mask_x = np.random.randint(0, W - target_w + 1)
+    mask_y = np.random.randint(0, H - target_h + 1) 
 
-    # Resize img2 based on width_weight and height_weight
-    W, H = img1.size
-    new_w = int(W * width_weight)
-    new_h = int(H * height_weight)
+    # 흰색 mask 그리기
+    draw.rectangle([mask_x, mask_y, mask_x + target_w, mask_y + target_h], fill=(255, 255, 255))
+
+    # mask영역에 맞게 CutMix
+    img2_aspect_ratio = img2.width / img2.height
+    new_h = target_h
+    new_w = int(new_h * img2_aspect_ratio)
+
+    if new_w > target_w:
+        new_w = target_w
+        new_h = int(new_w / img2_aspect_ratio)
+
     img2_resized = img2.resize((new_w, new_h))
-    img2_resized_array = np.array(img2_resized)
 
-    # Determine random position to place img2_resized within img1
-    max_x = W - new_w
-    max_y = H - new_h
-    if max_x < 0 or max_y < 0:
-        raise ValueError("Resized image is larger than the base image dimensions.")
+    # mask의 중앙 좌표 구하기
+    x_offset = mask_x + (target_w - new_w) // 2
+    y_offset = mask_y + (target_h - new_h) // 2
 
-    x_offset = np.random.randint(0, max_x + 1)
-    y_offset = np.random.randint(0, max_y + 1)
+    # 마스크 위에 CutMix하기
+    img1_copy.paste(img2_resized, (mask_x, mask_y))
 
-    # Determine location description based on the offsets
-    location = determine_location(x_offset + new_w/2, y_offset + new_h/2, W, H, new_w, new_h)
+    # 위치 정보 구하기
+    location = determine_location(x_offset, y_offset, W, H, new_w, new_h)
 
-    # Create a copy of img1 and place the resized img2 on it
-    image = img1_array.copy()
-    image[y_offset:y_offset + new_h, x_offset:x_offset + new_w] = img2_resized_array
-
-    # Convert back to PIL Image
-    return Image.fromarray(image), location
-
+    return img1_copy, location
 
 def read_json(filename):
     with open(filename, 'r') as file:
@@ -91,10 +98,10 @@ def read_json(filename):
             location_data = json.load(df)
 
         template_name = location_data["template_name"]
-        width_weight = float(location_data["width_weight"])
-        height_weight = float(location_data["height_weight"])
         task = location_data["task"]
         prompt_file = location_data["prompt_file"]
+        width_weight = location_data["width_weight"]
+        height_weight = location_data["height_weight"]
         specific_output_folder = os.path.join(output_folder, template_name, task)
 
         if not os.path.exists(specific_output_folder):
@@ -104,19 +111,11 @@ def read_json(filename):
             os.makedirs(output_prompt_folder)
 
         template_path = os.path.join(template_folder, f"{template_name}.png")
-        template = Image.open(template_path).convert('RGB').resize((256, 256))
-
-        if template is None:
-            print(f"Failed to load template image: {template_path}")
-            continue
+        template = Image.open(template_path).convert('RGB')
 
         for image_name in os.listdir(image_folder):
             image_path = os.path.join(image_folder, image_name)
-            image = Image.open(image_path).convert('RGB').resize((256, 256))
-
-            if image is None:
-                print(f"Failed to load image: {image_path}")
-                continue
+            image = Image.open(image_path).convert('RGB')
 
             result, location = cut_generator(template, image, width_weight, height_weight)
 
@@ -137,27 +136,26 @@ def read_json(filename):
             answer_format = prompt_data.get("answer", "")
             generated_answer = answer_format.replace("<answer>", answer).replace("<location>", location)
 
-            # 프롬프트 생성
+            # 프롬프트 생성 코드
             prompt_content = {
-                            "id": f"{image_name.split('.')[0]}_{image_name.split('.')[0]}_{task}",
-                            "image": os.path.abspath(output_image_name),
-                            "conversations": [
-                                {
-                                    "role": "user",
-                                    "content": question
-                                },
-                                {
-                                    "role": "assistant",
-                                    "content": generated_answer
-                                }
-                            ]
-                            }
+                "id": f"{image_name.split('.')[0]}_{image_name.split('.')[0]}_{task}",
+                "image": os.path.abspath(output_image_name),
+                "conversations": [
+                    {
+                        "role": "user",
+                        "content": question
+                    },
+                    {
+                        "role": "assistant",
+                        "content": generated_answer
+                    }
+                ]
+            }
 
             all_prompts.append(prompt_content)
 
             with open(prompt_output_filename, 'w', encoding='utf-8') as outfile:
                 json.dump(all_prompts, outfile, ensure_ascii=False, indent=4)
-
 
 def load_data_as_dict(json_path):
     with open(json_path, 'r', encoding='utf-8') as f:
@@ -165,7 +163,6 @@ def load_data_as_dict(json_path):
 
     data_dict = {annotation['id']: annotation['text'] for annotation in data['annotations']}
     return data_dict
-
 
 def find_answer(data_dict, image_name):
     image_id = image_name.split('.')[0]
