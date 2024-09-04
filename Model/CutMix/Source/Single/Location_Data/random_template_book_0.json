@@ -3,5 +3,5 @@
   "width_weight": 0.7,
   "height_weight": 0.4,
   "task": "random-book",
-  "prompt_file": "random-book.json"
+  "prompt_file": "random-content.json"
 }
