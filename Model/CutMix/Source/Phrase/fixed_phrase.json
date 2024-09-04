@@ -1,0 +1,15 @@
+{
+  "template_folder": "../../ImageTemplate/Phrase",
+  "metadata_folder": "../../Metadata",
+  "metadata_name": "handwriting_data_info_clean.json",
+  "image_folder": "../../Image/SentenceSample",
+  "output_folder": "../../Result/Phrase",
+  "output_prompt_folder": "../../Result/Phrase/Prompts",
+  "location_folder": "./Location_Data",
+  "prompt_folder": "./Prompt_Data",
+  "data_info": [
+    {
+      "data_file": "template_document_1.json"
+    }
+  ]
+}

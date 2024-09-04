@@ -10,6 +10,15 @@
   "data_info": [
     {
        "data_file": "template_sign_0.json"
+    },
+    {
+       "data_file": "template_sign_1.json"
+    },
+    {
+       "data_file": "template_signboard_0.json"
+    },
+        {
+       "data_file": "template_signboard_1.json"
     }
   ]
 }

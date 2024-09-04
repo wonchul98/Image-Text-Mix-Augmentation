@@ -1,7 +1,7 @@
   {
-    "template_name": "template_sign_0.jpg",
+    "template_name": "template_sign_0",
     "width_weight": 0.42,
-    "height_weight": 0.35,
+    "height_weight": 0.3,
     "x_location": 0.22,
     "y_location": 0.18,
     "task" : "description",
