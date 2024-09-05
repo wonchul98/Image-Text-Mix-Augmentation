@@ -34,45 +34,6 @@ def cut_generator(img1, img2, width_weight, height_weight, x_location, y_locatio
 
     return img1_copy
 
-### 중간에 사진 넣는 코드
-
-# def cut_generator(img1, img2, width_weight, height_weight, x_location, y_location):
-#     W, H = img1.size
-#     target_w = int(W * width_weight)
-#     target_h = int(H * height_weight)
-    
-#     # Resize the image while maintaining aspect ratio
-#     img2_aspect_ratio = img2.width / img2.height
-
-#     # Check if width exceeds target
-#     if img2.width > target_w:
-#         new_w = target_w
-#         new_h = int(new_w / img2_aspect_ratio)
-#     else:
-#         new_w = img2.width
-#         new_h = img2.height
-
-#     # If the height now exceeds the target, resize based on height instead
-#     if new_h > target_h:
-#         new_h = target_h
-#         new_w = int(new_h * img2_aspect_ratio)
-
-#     img2_resized = img2.resize((new_w, new_h))
-    
-#     x_offset = int(W * x_location)
-#     y_offset = int(H * y_location)
-    
-#     # Adjust x and y offset to center the image if it's smaller than the target area
-#     if new_w < target_w:
-#         x_offset += (target_w - new_w) // 2
-#     if new_h < target_h:
-#         y_offset += (target_h - new_h) // 2
-
-#     img1_copy = img1.copy()
-#     img1_copy.paste(img2_resized, (x_offset, y_offset))
-
-#     return img1_copy
-
 def make_white_label(img1, width_weight, height_weight, x_location, y_location):
     # 이미지 크기 가져오기
     W, H = img1.size
