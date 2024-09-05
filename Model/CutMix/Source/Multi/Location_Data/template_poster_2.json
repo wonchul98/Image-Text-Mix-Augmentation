@@ -1,0 +1,38 @@
+{
+  "template_name": "template_poster_2",
+  "prompt_file": "poster2-multi.json",
+  "insert_image_numbers": 5,
+  "task": "multi",
+  "insert_image_infos": [
+    {
+      "width_weight": 0.6,
+      "height_weight": 0.05,
+      "x_location": 0.27,
+      "y_location": 0.54
+    },
+    {
+      "width_weight": 0.6,
+      "height_weight": 0.05,
+      "x_location": 0.27,
+      "y_location": 0.59
+    },
+    {
+      "width_weight": 0.6,
+      "height_weight": 0.08,
+      "x_location": 0.27,
+      "y_location": 0.64
+    },
+    {
+      "width_weight": 0.6,
+      "height_weight": 0.10,
+      "x_location": 0.27,
+      "y_location": 0.73
+    },
+    {
+      "width_weight": 0.6,
+      "height_weight": 0.05,
+      "x_location": 0.27,
+      "y_location": 0.83
+    }
+  ]
+}

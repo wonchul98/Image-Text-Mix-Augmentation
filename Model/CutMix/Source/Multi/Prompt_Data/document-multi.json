@@ -1,0 +1,26 @@
+[
+    {
+        "question": "<image>\n표의 첫번째 줄의 상품명+옵션은 뭐고, 비고는 뭐야?",
+        "answer" : "표의 첫번째 줄 상품명+옵션은 <answer_1>이고, 비고는 <answer_10>입니다."
+    },
+     {
+        "question": "<image>\n표의 두번째 줄의 상품명+옵션은 뭐고, 비고는 뭐야?",
+        "answer" : "표의 두번째 줄 상품명+옵션은 <answer_2>이고, 비고는 <answer_11>입니다."
+    },
+     {
+        "question": "<image>\n표의 세번째 줄의 비고는 뭐고, 상품명+옵션이 뭐야?",
+        "answer" : "표의 세번째 줄 비고는 <answer_12>이고, 상품명+옵션은 <answer_3>입니다."
+    },
+   {
+        "question": "<image>\n공급자의 상호(법인명), 성명, 사업자 주소가 뭐야?",
+        "answer" : "공급자의 상호(법인명)은 <answer_4>이고, 성명은 <answer_5>이고, 사업자 주소는 <answer_6>입니다."
+    },
+  {
+        "question": "<image>\n공급자의 업태와 종목이 뭐야?",
+        "answer" : "공급자의 업태는 <answer_7>이고, 종목은 <answer_8>입니다."
+    },
+   {
+        "question": "<image>\n이 거래명세서의 거래처가 누구야?",
+        "answer" : "거래처는 <answer_9>입니다."
+    }
+]

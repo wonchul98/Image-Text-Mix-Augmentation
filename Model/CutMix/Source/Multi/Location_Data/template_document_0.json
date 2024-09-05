@@ -1,0 +1,80 @@
+{
+  "template_name": "template_document_0",
+  "prompt_file": "document-multi.json",
+  "insert_image_numbers": 12,
+  "task": "multi",
+  "insert_image_infos": [
+    {
+      "width_weight": 0.3,
+      "height_weight": 0.03,
+      "x_location": 0.09,
+      "y_location": 0.29
+    },
+    {
+      "width_weight": 0.3,
+      "height_weight": 0.03,
+      "x_location": 0.09,
+      "y_location": 0.33
+    },
+    {
+      "width_weight": 0.3,
+      "height_weight": 0.03,
+      "x_location": 0.09,
+      "y_location": 0.37
+    },
+    {
+      "width_weight": 0.13,
+      "height_weight": 0.03,
+      "x_location": 0.6,
+      "y_location": 0.12
+    },
+     {
+      "width_weight": 0.18,
+      "height_weight": 0.03,
+      "x_location": 0.8,
+      "y_location": 0.12
+    },
+    {
+      "width_weight": 0.39,
+      "height_weight": 0.03,
+      "x_location": 0.59,
+      "y_location": 0.16
+    },
+    {
+      "width_weight": 0.13,
+      "height_weight": 0.05,
+      "x_location": 0.59,
+      "y_location": 0.21
+    },
+    {
+      "width_weight": 0.13,
+      "height_weight": 0.05,
+      "x_location": 0.8,
+      "y_location": 0.21
+    },
+    {
+      "width_weight": 0.27,
+      "height_weight": 0.02,
+      "x_location": 0.08,
+      "y_location": 0.17
+    },
+     {
+      "width_weight": 0.16,
+      "height_weight": 0.03,
+      "x_location": 0.82,
+      "y_location": 0.29
+    },
+    {
+      "width_weight": 0.16,
+      "height_weight": 0.03,
+      "x_location": 0.82,
+      "y_location": 0.33
+    },
+    {
+      "width_weight": 0.16,
+      "height_weight": 0.03,
+      "x_location": 0.82,
+      "y_location": 0.37
+    }
+  ]
+}

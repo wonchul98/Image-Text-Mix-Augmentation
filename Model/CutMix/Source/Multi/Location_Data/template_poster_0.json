@@ -1,0 +1,44 @@
+{
+  "template_name": "template_poster_0",
+  "prompt_file": "poster0-multi.json",
+  "insert_image_numbers": 6,
+  "task": "multi",
+  "insert_image_infos": [
+    {
+      "width_weight": 0.1,
+      "height_weight": 0.03,
+      "x_location": 0.52,
+      "y_location": 0.43
+    },
+    {
+      "width_weight": 0.3,
+      "height_weight": 0.03,
+      "x_location": 0.52,
+      "y_location": 0.584
+    },
+    {
+      "width_weight": 0.3,
+      "height_weight": 0.06,
+      "x_location": 0.52,
+      "y_location": 0.68
+    },
+    {
+      "width_weight": 0.3,
+      "height_weight": 0.04,
+      "x_location": 0.52,
+      "y_location": 0.79
+    },
+    {
+      "width_weight": 0.15,
+      "height_weight": 0.05,
+      "x_location": 0.2,
+      "y_location": 0.84
+    },
+    {
+      "width_weight": 0.05,
+      "height_weight": 0.07,
+      "x_location": 0.378,
+      "y_location": 0.84
+    }
+  ]
+}
