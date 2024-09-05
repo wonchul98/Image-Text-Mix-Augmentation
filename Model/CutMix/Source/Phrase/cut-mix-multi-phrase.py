@@ -4,7 +4,19 @@ import cv2
 import numpy as np
 
 
-def cut_phrase(template, image, x, y, start, end, height_per_line_px):
+def masking(template, x, y, rectangle_width, height_per_line_px, max_lines, padding_px):
+  template_copy = template.copy()
+  color = (255, 255, 255)  # 흰색
+  thickness = -1
+  for i in range(max_lines):
+    start_point = (x, y)  # 시작 점
+    end_point = (x + rectangle_width, y + height_per_line_px)  # 끝 점
+    cv2.rectangle(template_copy, start_point, end_point, color, thickness)
+    y = y + height_per_line_px + padding_px
+  return template_copy
+
+
+def cut_phrase(template, image, x, y, start, end, height_per_line_px, padding_px):
   """
   img1: 템플릿 이미지 (OpenCV image)
   img2: 삽입할 이미지 (OpenCV image)
@@ -16,8 +28,8 @@ def cut_phrase(template, image, x, y, start, end, height_per_line_px):
 
   ratio = height_per_line_px / H
 
-  print("height_per_line_px", height_per_line_px)
-  print("ratio", ratio)
+  # print("height_per_line_px", height_per_line_px)
+  # print("ratio", ratio)
 
   # Calculate new dimensions based on the selected ratio
   new_w = int(W * ratio)
@@ -29,8 +41,8 @@ def cut_phrase(template, image, x, y, start, end, height_per_line_px):
   while img2_resized.shape[1] > 0:
     # Calculate how much of the image fits in the current line
     space_remaining = end - x
-    print("end", end)
-    print("remaining", space_remaining)
+    # print("end", end)
+    # print("remaining", space_remaining)
     if img2_resized.shape[1] <= space_remaining:
       # If the whole image fits in the remaining space
       template[y:y + img2_resized.shape[0],
@@ -45,7 +57,7 @@ def cut_phrase(template, image, x, y, start, end, height_per_line_px):
       # Move to the next line
       img2_resized = img2_resized[:, space_remaining:]
       x = start
-      y += height_per_line_px + 10
+      y += height_per_line_px + padding_px
 
   return template, x, y
 
@@ -87,6 +99,7 @@ def read_json(filename):
     y_location = float(location_data["y_location"])
     height_per_line = float(location_data["height_per_line"])
     max_lines = int(location_data["max_lines"])
+    padding_px = int(location_data["padding"])
     task = location_data["task"]
     prompt_file = location_data["prompt_file"]
     specific_output_folder = os.path.join(output_folder, template_name, task)
@@ -117,23 +130,24 @@ def read_json(filename):
     end = x_pixel_location + rectangle_width
 
     total_length = rectangle_width * max_lines
+    template_masked = masking(template, x_pixel_location, y_pixel_location, rectangle_width, height_per_line_px, max_lines, padding_px)
 
     images = os.listdir(image_folder)
 
     i = 0
     while i < len(images):
       len_sum = 0
-      result = template.copy()
       answer = ""
       x = x_pixel_location
       y = y_pixel_location
+      result = template_masked.copy()
       extra = 0
-      print("1st loop:", i)
+      # print("1st loop:", i)
 
       while i + extra < len(images):
-        print("2nd loop:", extra)
+        # print("2nd loop:", extra)
         image_name = images[i + extra]
-        print(image_name)
+        # print(image_name)
         image_path = os.path.join(image_folder, image_name)
         image = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
 
@@ -151,9 +165,9 @@ def read_json(filename):
 
         # Cut and paste the image
         result, x, y = cut_phrase(result, image, x, y, x_pixel_location, end,
-                                  height_per_line_px)
+                                  height_per_line_px, padding_px)
         answer += find_answer(data_dict, image_name)
-        print(find_answer(data_dict, image_name))
+        # print(find_answer(data_dict, image_name))
         extra += 1
 
       if extra == 0:

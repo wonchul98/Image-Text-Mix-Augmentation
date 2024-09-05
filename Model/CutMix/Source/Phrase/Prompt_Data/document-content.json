@@ -1,0 +1,5 @@
+{
+  "question": "<image>\n이 문서의 내용은 뭐야?",
+  "answer_format1": "이 문서의 내용은 '",
+  "answer_format2": "'입니다."
+}

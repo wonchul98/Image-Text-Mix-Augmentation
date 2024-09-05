@@ -9,7 +9,16 @@
   "prompt_folder": "./Prompt_Data",
   "data_info": [
     {
+      "data_file": "template_document_0.json"
+    },
+    {
       "data_file": "template_document_1.json"
+    },
+    {
+      "data_file": "template_document_2.json"
+    },
+    {
+      "data_file": "template_document_3.json"
     }
   ]
 }

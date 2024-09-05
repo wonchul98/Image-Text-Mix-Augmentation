@@ -6,6 +6,7 @@
     "y_location": 0.13,
     "height_per_line" : 0.02,
     "max_lines" : 10,
+    "padding" : 10,
     "task": "phrase",
-    "prompt_file": "test-phrase.json"
+    "prompt_file": "document-content.json"
 }
