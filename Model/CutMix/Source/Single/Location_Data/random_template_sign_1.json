@@ -1,0 +1,7 @@
+{
+  "template_name": "template_sign_1",
+  "width_weight": 0.3,
+  "height_weight": 0.2,
+  "task": "random-sign",
+  "prompt_file": "random-content.json"
+}

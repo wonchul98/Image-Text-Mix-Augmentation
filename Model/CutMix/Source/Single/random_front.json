@@ -3,7 +3,7 @@
   "metadata_folder": "../../Metadata",
   "metadata_name": "handwriting_data_info_clean.json",
   "image_folder": "../../Image/sample",
-  "output_folder": "../../Result/Single/Random",
+  "output_folder": "../../Result/Single",
   "output_prompt_folder": "../../Result/Single/Prompts",
   "location_folder": "./Location_Data",
   "prompt_folder": "./Prompt_Data",
