@@ -189,7 +189,7 @@ def read_json(filename):
 
         # 프롬프트 생성
         prompt_content = {
-                          "id": f"{image_name.split('.')[0]}_{image_name.split('.')[0]}_{task}",
+                          "id": f"{template_name}_{image_name.split('.')[0]}_{task}",
                           "image": os.path.abspath(output_image_name),
                           "conversations": [
                             {
