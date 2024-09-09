@@ -1,6 +1,6 @@
 {
     "question": "<image>\n표지판에 뭐라고 적혀있어?",
-    "answer_format1": "표지판에는 ",
-    "answer_format2": "라고 적혀있습니다."
+    "answer_format1": "표지판에 적혀있는 글자는 '",
+    "answer_format2": "'입니다."
   }
   
