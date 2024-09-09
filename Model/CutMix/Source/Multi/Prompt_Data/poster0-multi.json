@@ -1,0 +1,14 @@
+[
+    {
+        "question": "<image>\n이 포스터에서 당시 나이가 몇이고 발생장소는 어디야?",
+        "answer" : "당시 나이는  <answer_1>이고, 발생장소는 <answer_2>입니다."
+    },
+    {
+        "question": "<image>\n이 포스터에서 신체 특징이 무엇이고, 착의사항은 뭐야?",
+        "answer" : "신체 특징은  <answer_3>이고, 착의사항은 <answer_4>입니다."
+    },
+    {
+        "question": "<image>\n이 포스터에서 사진 속 사람 이름은 무엇이고, 성별은 뭐야?",
+        "answer" : "이름은  <answer_5>이고, 성별은 <answer_6>입니다."
+    }
+]

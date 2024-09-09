@@ -5,6 +5,6 @@
     "x_location": 0.25,
     "y_location": 0.1,
     "task": "content",
-    "prompt_file": "signboard_content.json"
+    "prompt_file": "signboard-content.json"
   }
   
