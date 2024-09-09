@@ -1,0 +1,5 @@
+{
+  "question": "<image>\n학습목표로 뭐가 쓰여져 있어?",
+  "answer_format1": "제공된 이미지에 쓰여 있는 학습목표는 '",
+  "answer_format2": "'입니다."
+}
