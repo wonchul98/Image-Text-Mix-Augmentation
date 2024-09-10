@@ -43,9 +43,6 @@ def cut_generator(img1, img2, width_weight, height_weight):
     mask_x = np.random.randint(0, W - target_w + 1)
     mask_y = np.random.randint(0, H - target_h + 1) 
 
-    # 흰색 mask 그리기
-    draw.rectangle([mask_x, mask_y, mask_x + target_w, mask_y + target_h], fill=(255, 255, 255))
-
     # mask영역에 맞게 CutMix
     img2_aspect_ratio = img2.width / img2.height
     new_h = target_h
