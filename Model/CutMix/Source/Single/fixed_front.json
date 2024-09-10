@@ -10,6 +10,57 @@
   "data_info": [
     {
       "data_file": "template_book_0.json"
+    },
+    {
+      "data_file": "template_book_1.json"
+    },
+    {
+      "data_file": "template_book_2.json"
+    },
+    {
+      "data_file": "template_etc_1.json"
+    },
+    {
+      "data_file": "template_etc_2.json"
+    },
+    {
+      "data_file": "template_gifticon_0.json"
+    },
+    {
+      "data_file": "template_gifticon_1.json"
+    },
+    {
+      "data_file": "template_goods_0.json"
+    },
+    {
+      "data_file": "template_goods_1.json"
+    },
+    {
+      "data_file": "template_poster_0.json"
+    },
+    {
+      "data_file": "template_poster_1.json"
+    },
+    {
+      "data_file": "template_poster_2.json"
+    },
+    {
+      "data_file": "template_sign_0.json"
+    },
+    {
+      "data_file": "template_sign_1.json"
+    },
+    {
+      "data_file": "template_sign_2.json"
+    },
+    {
+      "data_file": "template_signboard_0.json"
+    },
+    {
+      "data_file": "template_signboard_1.json"
+    },
+    {
+      "data_file": "template_signboard_2.json"
     }
   ]
 }
