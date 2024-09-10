@@ -1,9 +1,9 @@
   {
     "template_name": "template_signboard_2",
-    "width_weight": 0.34,
-    "height_weight": 0.45,
-    "x_location": 0.16,
-    "y_location": 0.34,
+    "width_weight": 0.56,
+    "height_weight": 0.56,
+    "x_location": 0.17,
+    "y_location": 0.14,
     "task" : "description",
     "prompt_file" : "signboard-content.json"
   }
