@@ -3,7 +3,8 @@ from PIL import Image, ImageDraw
 import json
 import concurrent.futures
 from math import ceil
-from multiprocessing import Manager
+from multiprocessing import Manager, current_process
+from datetime import datetime
 
 def load_templates_and_location_data(location_folder, template_folder, prompt_folder, data_info):
     templates = []
@@ -79,6 +80,7 @@ def find_answer(data_dict, image_name):
     return data_dict.get(image_id, None)
 
 def process_image_batch(image_filenames, templates, location_infos, prompts, folder_path, output_folder, data_dict, shared_train_prompts, shared_test_prompts):
+    cnt = 0
     for i, filename in enumerate(image_filenames):
         img_path = os.path.join(folder_path, filename)
         img = Image.open(img_path)
@@ -92,7 +94,11 @@ def process_image_batch(image_filenames, templates, location_infos, prompts, fol
 
             mixed_img = cut_generator(template_img, img, location_data["width_weight"], location_data["height_weight"],
                                       location_data["x_location"], location_data["y_location"])
-
+            cnt += 1
+            if cnt % 5000 == 0:
+                process_name = current_process().name
+                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                print(f"{current_time} | {process_name} | {cnt} 이미지 생성 완료")
             # Save the CutMix image
             output_filename = f"{location_data['template_name']}_{filename.split('.')[0]}_{location_data['task']}.jpg"
             specific_output_folder = os.path.join(output_folder, location_data['template_name'], location_data['task'])
@@ -100,7 +106,7 @@ def process_image_batch(image_filenames, templates, location_infos, prompts, fol
             output_image_path = os.path.join(specific_output_folder, output_filename)
             mixed_img.save(output_image_path)
 
-            # Find the answer and prepare prompt content
+             # Find the answer and prepare prompt content
             answer = find_answer(data_dict, filename)
             if not answer:
                 answer = "Not found"
