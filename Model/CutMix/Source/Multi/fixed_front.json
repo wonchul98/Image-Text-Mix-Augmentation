@@ -2,7 +2,7 @@
   "template_folder": "../../ImageTemplate/Multi",
   "metadata_folder": "../../Metadata",
   "metadata_name": "handwriting_data_info_clean.json",
-  "image_folder": "../../Image/sample",
+  "image_folder": "C:/Users/SSAFY/Desktop/1_word",
   "output_folder": "../../Result/Multi",
   "output_prompt_folder": "../../Result/Multi/Prompts",
   "location_folder": "./Location_Data",
