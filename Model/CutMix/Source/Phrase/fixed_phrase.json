@@ -2,7 +2,7 @@
   "template_folder": "../../ImageTemplate/Phrase",
   "metadata_folder": "../../Metadata",
   "metadata_name": "handwriting_data_info_clean.json",
-  "image_folder": "../../Image/SentenceSample",
+  "image_folder": "../../Image/sentence",
   "output_folder": "../../Result/Phrase",
   "output_prompt_folder": "../../Result/Phrase/Prompts",
   "location_folder": "./Location_Data",
