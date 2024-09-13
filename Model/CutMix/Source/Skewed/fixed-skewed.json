@@ -2,7 +2,7 @@
   "template_folder": "../../ImageTemplate/Skewed",
   "metadata_folder": "../../Metadata",
   "metadata_name": "handwriting_data_info_clean.json",
-  "image_folder": "../../Image/sample",
+  "image_folder": "../../Image/word",
   "output_folder": "../../Result/Skewed",
   "output_prompt_folder": "../../Result/Skewed/Prompts",
   "location_folder": "./Location_Data",
