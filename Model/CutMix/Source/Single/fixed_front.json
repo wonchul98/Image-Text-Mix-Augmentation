@@ -2,7 +2,7 @@
   "template_folder": "../../ImageTemplate/Single",
   "metadata_folder": "../../Metadata",
   "metadata_name": "handwriting_data_info_clean.json",
-  "image_folder": "../../Image/sample",
+  "image_folder": "../../Image/Sample",
   "output_folder": "../../Result/Single",
   "output_prompt_folder": "../../Result/Single/Prompts",
   "location_folder": "./Location_Data",
