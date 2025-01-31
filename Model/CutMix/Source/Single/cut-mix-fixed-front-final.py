@@ -68,9 +68,6 @@ def cut_generator(img1, img2, width_weight, height_weight, x_location, y_locatio
 
     return img1_copy
 
-import os
-import json
-
 def append_to_json_file(filepath, new_data):
     # Check if the file exists
     if os.path.exists(filepath):
