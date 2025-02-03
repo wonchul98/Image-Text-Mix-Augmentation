@@ -10,7 +10,7 @@
 <br/>
 
 ## 논문
-- (예시) [프로젝트 관련 논문 링크 또는 안내](#)
+- [논문 링크](https://github.com/wonchul98/Image-Text-Mix-Augmentation/blob/feature/cutmix-code/S11P21S006-125/Docs/Image_Text_Augmentation.pdf)
 
 <br/>
 
