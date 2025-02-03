@@ -66,6 +66,7 @@
   <img src="https://github.com/user-attachments/assets/66c3c624-59ee-45f2-8394-a977eed8ffbf" alt="웹 데모 스크린샷 2">
 </p>
 
+같은 사진에 대해서 학습 이전 모델 대비 한국어를 정확하게 인식하는 것을 확인할 수 있습니다. 
 <br/>
 
 
